@@ -1,0 +1,133 @@
+create table employee_table(
+ID int(10),
+Name varchar(20),
+last_name varchar(20),
+Department int(10)
+);
+
+insert into employee_table(ID ,Name,Last_name,Department)values
+(123234877 ,'Michael','Rogers','14'),
+(152934485,' Anand',' Manikutty' ,'14'),
+(222364883, 'Carol', 'Smith', '37'),
+(326587417, 'Joe' ,'Stevens' ,'37'),
+(332154719, 'Mary-Anne', 'Foster' ,'14'),
+(332569843,'George ','ODonnell', '77'),
+(546523478,'John','Doe','59'),
+(631231482,'David','Smith','77'),
+(654873219,'Zacary' ,'Efron' ,'59'),
+(745685214,'Eric','Goldsmith','59'),
+(845657245,'Elizabeth','Doe','14'),
+(845657246,'Kumar','Swamy','14');
+
+select * from employee_table;
+
+create table department_table(
+Code int(10),
+Name varchar(20),
+Budget int(10)
+);
+
+insert into department_table(Code ,Name,Budget)values
+('14', 'IT', '6500'),
+('37', 'Accounting','15000'),
+('59', 'Human Resources' ,'240000'),
+('77' ,'Research' ,'55000');
+
+select * from department_table;
+
+#Que-1(Select the last name of all employees, without duplicates.)
+select distinct Last_name from employee_table;
+
+#Que-2(Select all the data of employees whose last name is "Smith".)
+select * from employee_table where last_name = 'Smith';
+
+#Que-3(Select all the data of employees whose last name is "Smith" or "Doe".)
+select * from Employee_table where last_name = 'Smith' or last_name = 'Doe';
+
+#Que-4(Select all the data of employees that work in department 14.)
+select * from Employee_table where department = 14;
+
+#Que-5( Select all the data of employees that work in department 37 or department 77.)
+select * from employee_table where department = 37 or department = 77;
+
+#Que-6(Select all the data of employees whose last name begins with an "S".)
+select * from employee_table where Last_name like 'S%';
+
+#Que-7(Select the sum of all the departments' budgets.)
+select sum(budget) from Department_table;
+
+#Que-8( Select the number of employees in each department (you only need to show the department code and the number of employees))
+select Department, count(*) from employee_table group by department;
+
+#Que-9(Select all the data of employees, including each employee's department's data.)
+select a.*, b.* from employee_table a join department_table b on a.department = b.code;
+
+#Que-10( Select the name and last name of each employee, along with the name and budget of the employee's department.)
+select a.name, a.last_name, b.name Department_name, b.Budget
+from employee_table a join department_table b
+on a.department = b.code;
+
+#Que-11(Select the name and last name of employees working for departments with a budget greater than $60,000.)
+select name, last_name
+from employee_table 
+where department in (
+select code from department_table where Budget>60000
+);
+
+#Que-12(Select the departments with a budget larger than the average budget of all the departments.)
+select *
+from department_table
+where budget > (
+select avg(budget) from department_table
+);
+
+#Que-13(Select the names of departments with more than two employees.)
+select b.name 
+from department_table b
+where code in (
+select department
+from employee_table
+group by department
+having count(*)>2
+);
+
+#Que-14(Very Important, Select the name and last name of employees working for departments with second lowest budget.)
+select name, last_name
+from employee_table
+where department =(
+select temp.code 
+from (select * from department_table order by budget limit 2) temp
+order by temp.budget desc limit 1
+);
+
+#Que-15(Add a new department called "Quality Assurance", with a budget of $40,000 and departmental code 11. )
+insert into department_table values(11, 'Quality Assurance', 40000);
+select * from department_table;
+
+#Que-16(Add an employee called "Mary Moore" in that department, with SSN 847-21-9811.)
+insert into employee_table values(847219811, 'Mary', 'Moore', 11);
+select * from employee_table;
+
+#Que-17( Reduce the budget of all departments by 10%.)
+update department_table 
+set budget = 0.9 * budget;
+
+#Que-18(Reassign all employees from the Research department (code 77) to the IT department (code 14).)
+update employee_table 
+set department = 14
+where department = 77;
+
+#Que-19(Delete from the table all employees in the IT department (code 14).)
+delete from employee_table 
+where department = 14;
+
+#Que-20( Delete from the table all employees who work in departments with a budget greater than or equal to $60,000.)
+delete from employee_table 
+where department in (
+select code 
+from department_table 
+where budget>=60000
+);
+
+#Que-21( Delete from the table all employees.)
+delete from employee_table ;
